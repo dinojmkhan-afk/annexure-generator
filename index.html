@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITI Annexure 2 &amp; 3 Generator</title>
+<style>
+:root{--ink:#1d2433;--mut:#5d6778;--line:#d6dbe4;--bg:#f4f6f9;--pri:#1f4e8c;--pri2:#e8f0fb;--ok:#1b7f4b;--warn:#b45309;--bad:#b42318}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header.app{background:#fff;border-bottom:1px solid var(--line);padding:10px 18px;position:sticky;top:0;z-index:5;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+header.app h1{font-size:16px;margin:0;font-weight:650}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{border:1px solid transparent;background:none;padding:7px 14px;border-radius:7px;font:inherit;color:var(--mut);cursor:pointer}
+nav button.on{background:var(--pri2);color:var(--pri);font-weight:600}
+nav button:hover:not(.on){background:#eef1f6}
+main{padding:18px;max-width:1280px;margin:0 auto}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.card h2{font-size:15px;margin:0 0 4px}
+.hint{color:var(--mut);font-size:12.5px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px 14px}
+label.f{display:block;font-size:12px;color:var(--mut)}
+label.f input,label.f select{display:block;width:100%;margin-top:3px}
+input,select,textarea{font:inherit;color:inherit;border:1px solid #c5ccd8;border-radius:6px;padding:6px 8px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid #9ec0ee;border-color:var(--pri)}
+textarea{width:100%;min-height:110px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+button.b{border:1px solid #c5ccd8;background:#fff;border-radius:7px;padding:6px 12px;font:inherit;cursor:pointer}
+button.b:hover{background:#f0f3f8}
+button.p{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+button.p:hover{background:#18407a}
+button.d{color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+table.t{border-collapse:collapse;width:100%;font-size:13px}
+table.t th,table.t td{border:1px solid var(--line);padding:3px 5px;text-align:left}
+table.t th{background:#f0f3f8;font-weight:600;position:sticky;top:0}
+table.t input{width:100%;border:1px solid transparent;padding:3px 4px;background:transparent}
+table.t input:hover{border-color:#c5ccd8}
+table.t input:focus{background:#fff}
+td.n,th.n{text-align:center}
+.mk input{text-align:center;width:54px}
+.scroll{overflow:auto;max-height:68vh;border:1px solid var(--line);border-radius:8px}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;background:#eef1f6;color:var(--mut)}
+.tag.ok{background:#e3f4ea;color:var(--ok)}.tag.warn{background:#fdf0dc;color:var(--warn)}.tag.bad{background:#fde7e5;color:var(--bad)}
+.calc{color:var(--mut);text-align:center}
+.calc.mark{font-weight:700;color:var(--ink)}
+table.t input.c-atc{color:var(--mut);text-align:center;width:46px}
+table.t input.c-atc.ov{background:#fff4d6;color:var(--ink);font-weight:700;border-color:#e0b64a}
+.issues li{margin:2px 0}
+details summary{cursor:pointer;color:var(--pri);font-weight:600}
+.sec{display:none}.sec.on{display:block}
+.modal{display:none;position:fixed;inset:0;background:rgba(20,28,40,.45);z-index:50;align-items:center;justify-content:center;padding:16px}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:12px;padding:20px 22px;max-width:460px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.modal h3{margin:0 0 6px;font-size:16px}
+.modal p{margin:0 0 12px;color:var(--ink);white-space:pre-line}
+.modal input{width:100%;margin-bottom:12px}
+.modal .row{justify-content:flex-end}
+button.b.danger{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:600}
+button.b.danger:disabled{opacity:.45;cursor:not-allowed}
+/* ---------- print sheets ---------- */
+#pages{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.sheet{background:#fff;color:#000;font-family:Calibri,"Segoe UI",Arial,sans-serif}
+@media screen{.sheet{box-shadow:0 1px 6px rgba(0,0,0,.25);zoom:.7}}
+.sheet.a2{width:285mm;height:198mm;padding:0;page:land;break-after:page;overflow:hidden}
+.sheet.a3{width:198mm;height:285mm;padding:0;page:port;break-after:page;overflow:hidden}
+.sheet:last-child{break-after:auto}
+@page land{size:A4 landscape;margin:6mm}
+@page port{size:A4 portrait;margin:6mm}
+.sheet table{border-collapse:collapse;table-layout:fixed;width:100%}
+.sheet td,.sheet th{border:.3mm solid #000;padding:0 1mm;font-size:8.5pt;overflow:hidden;line-height:1.15}
+.a2 .t1{text-align:center;font-weight:700;font-size:12pt;line-height:1.2}
+.a2 .t2{text-align:center;font-weight:700;font-size:10pt;text-decoration:underline;margin-bottom:1mm}
+.a2 table.info td{font-weight:700;height:4.9mm;font-size:9pt}
+.a2 table.main th{font-weight:700;text-align:center;font-size:8pt}
+.a2 table.main th.vert div{writing-mode:vertical-rl;transform:rotate(180deg);margin:0 auto;height:23mm;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05;font-size:7.6pt}
+.a2 table.main td{height:4.85mm;font-size:8.5pt}
+.a2 td.c{text-align:center}
+.a2 .sig{display:flex;justify-content:space-between;margin-top:9mm;font-weight:700;font-size:10pt;padding:0 6mm}
+.a3 td,.a3 th{font-size:8pt}
+.a3 .ttl{font-weight:700;font-size:11pt}
+.a3 td.c{text-align:center}
+.a3 td.b{font-weight:700}
+.a3 .nm{font-weight:700;font-size:11pt;text-align:center;background:#fdeee3}
+.a3 .lab{font-weight:700;text-align:center;background:#fdeee3;font-size:8pt}
+.a3 tr.h td,.a3 tr.h th{height:5.7mm}
+.a3 tr.g td{height:5.6mm}
+.a3 tr.sg td{height:8mm;font-weight:700}
+.a3 .lon{font-weight:700;text-align:center;font-size:8.5pt}
+@media print{
+  body{background:#fff}
+  header.app,.noprint,.sec:not(#s-print),#s-print .card{display:none!important}
+  main{padding:0;max-width:none}
+  #s-print{display:block!important}
+  #pages{display:block}
+  .sheet{box-shadow:none;zoom:1}
+}
+</style>
+</head>
+<body>
+<header class="app noprint">
+  <h1>ITI Annexure 2 &amp; 3 Generator</h1>
+  <nav id="nav">
+    <button data-s="setup" class="on">1 · Setup</button>
+    <button data-s="students">2 · Students</button>
+    <button data-s="marks">3 · Marks</button>
+    <button data-s="print">4 · Print</button>
+  </nav>
+  <span style="flex:1"></span>
+  <span class="tag" id="saved">Saved in this browser</span>
+  <span class="tag" id="cloudTag" hidden></span>
+  <button class="b" id="btnGoogle" hidden>Sign in with Google</button>
+  <button class="b" id="btnExport">Backup</button>
+  <button class="b" id="btnImport">Restore</button>
+  <input type="file" id="fileImport" accept=".json" hidden>
+</header>
+
+<main>
+<!-- SETUP -->
+<section class="sec on" id="s-setup">
+  <div class="card">
+    <h2>Batch details</h2>
+    <p class="hint">Printed on the header of every Annexure 2 and 3. Entered once, remembered on this computer.</p>
+    <div class="grid" id="setupGrid"></div>
+  </div>
+  <div class="card">
+    <h2>Learning outcomes</h2>
+    <p class="hint">One row per LO. Annexure 3 prints <b id="colsTxt">14</b> LO columns per page; if there are more LOs than that, a second Annexure 3 page is added per student (LO 15 onwards), and so on. The date is optional and is printed on that LO's Annexure 2.</p>
+    <label class="f" style="margin-bottom:8px">Paste learning outcomes from Excel (one per row; either just the name, or LO number then name in two columns)
+      <textarea id="pasteLo" style="min-height:70px" placeholder="1&#9;Install and setup operating system and related software in a computer following safety precautions.&#10;2&#9;Create, format and edit document using word processing application software."></textarea></label>
+    <div class="row" style="margin-bottom:12px"><button class="b p" id="loReplace">Replace LO list with pasted</button><button class="b" id="loAppend">Add pasted to list</button><span class="hint" style="margin:0">Marks already entered are cleared when the list is replaced.</span></div>
+    <div class="scroll" style="max-height:340px"><table class="t" id="loTable"></table></div>
+    <div class="row" style="margin-top:10px"><button class="b" id="addLo">+ Add LO</button><button class="b d" id="delLo">Remove last LO</button><button class="b d" id="delAllLo">Delete all LOs…</button></div>
+  </div>
+</section>
+
+<!-- STUDENTS -->
+<section class="sec" id="s-students">
+  <div class="card">
+    <h2>Paste students from Excel</h2>
+    <p class="hint">Copy three columns (Student name, Father's name, Roll no.) from Excel or your admission portal and paste here. Father's name and roll no. are optional.</p>
+    <textarea id="pasteStu" placeholder="ABHAYA D&#9;VINOD M&#9;26"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="b p" id="stuReplace">Replace list with pasted</button>
+      <button class="b" id="stuAppend">Add to list</button>
+      <button class="b" id="stuSort">Sort A–Z</button>
+      <button class="b d" id="stuClear">Clear all</button>
+      <span class="tag" id="stuCount"></span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Student list</h2>
+    <div class="scroll"><table class="t" id="stuTable"></table></div>
+    <div class="row" style="margin-top:10px"><button class="b" id="stuAdd">+ Add student</button></div>
+  </div>
+</section>
+
+<!-- MARKS -->
+<section class="sec" id="s-marks">
+  <div class="card">
+    <div class="row">
+      <h2 style="margin:0">Marks</h2>
+      <label class="f" style="min-width:300px">How do you enter marks?
+        <select id="mode">
+          <option value="direct">Final mark per LO (out of 100) — quickest</option>
+          <option value="calc">TP / TT / Attendance — app works out the mark</option>
+        </select>
+      </label>
+      <label class="f" id="loPickWrap" style="display:none;min-width:260px">Learning outcome<select id="loPick"></select></label>
+      <span id="maxWrap" class="row" style="display:none;align-items:flex-end;flex:1 1 100%">
+        <label class="f" style="width:110px">Practical out of<input type="number" id="tpMax" min="1" step="any"></label>
+        <label class="f" style="width:110px">Theory out of<input type="number" id="ttMax" min="1" step="any"></label>
+        <label class="f" style="width:150px;margin-left:auto">Adjust final marks (%)
+          <span class="row" style="gap:3px;flex-wrap:nowrap;margin-top:3px"><button class="b" id="adjDn" style="padding:6px 10px">−</button><input type="number" id="adj" step="1" min="-90" max="100" style="width:70px;margin:0;text-align:center"><button class="b" id="adjUp" style="padding:6px 10px">+</button></span></label>
+        <button class="b" id="maxAll" title="Use these three values for every LO">Apply to all LOs</button>
+      </span>
+    </div>
+    <p class="hint" style="margin-top:8px" id="markHint"></p>
+    <div class="scroll" id="marksWrap"></div>
+  </div>
+  <div class="card" id="summaryCard" style="display:none">
+    <h2>Final marks (read-only)</h2>
+    <div class="scroll" id="summaryWrap"></div>
+  </div>
+</section>
+
+<!-- PRINT -->
+<section class="sec" id="s-print">
+  <div class="card">
+    <h2>Generate and print</h2>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+      <label class="f">What to print
+        <select id="what">
+          <option value="both">Annexure 2 + Annexure 3</option>
+          <option value="a2">Annexure 2 only (one page per LO)</option>
+          <option value="a3">Annexure 3 only (per student)</option>
+        </select>
+      </label>
+      <label class="f">Annexure 2: learning outcome<select id="pLo"></select></label>
+      <label class="f">Annexure 3: student<select id="pStu"></select></label>
+      <label class="f">Annexure 3 LO columns per page<input type="number" id="colsPer" min="1" max="20"></label>
+      <label class="f">Annexure 2 student rows per page<input type="number" id="rowsPer" min="10" max="40"></label>
+      <label class="f">Pass mark (Result Y/N)<input type="number" id="passMark" min="0" max="100"></label>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label><input type="checkbox" id="skipEmpty" checked> Skip LOs that have no marks entered</label>
+      <span style="flex:1"></span>
+      <button class="b" id="btnPrint">Print / Save as PDF</button>
+      <button class="b p" id="btnDl">Download print-ready file</button>
+    </div>
+    <p class="hint" style="margin:8px 0 0"><b>Download print-ready file</b> saves the pages as an .html file; open it and it opens the print dialog (use this when the Print button does nothing, e.g. inside Claude). In the print window choose <b>Save as PDF</b> or your printer, paper <b>A4</b>, margins <b>Default / None</b>, and turn <b>Headers and footers</b> off. Annexure 2 prints landscape and Annexure 3 portrait automatically.</p>
+  </div>
+  <div class="card" id="checkCard"><h2>Checks</h2><div id="checks"></div></div>
+  <div class="noprint" style="margin:6px 2px 10px;color:var(--mut)" id="pgInfo"></div>
+  <div id="pages"></div>
+</section>
+</main>
+
+<div class="modal noprint" id="dlg"><div class="box"><h3 id="dlgTitle"></h3><p id="dlgMsg"></p><input id="dlgInput" autocomplete="off" hidden><div class="row"><button class="b" id="dlgNo">Cancel</button><button class="b p" id="dlgYes">OK</button></div></div></div>
+<script>
+/*CORE-START*/
+const Core=(function(){
+  const RANK=[[155,100],[145,98],[135,95],[130,92],[125,88],[120,84],[115,80],[110,76],[105,73],[100,69],[95,65],[92,63],[84,60],[75,50],[65,40],[55,30],[45,20],[40,15]];
+  const ATC=[[80,10],[70,9],[60,8],[50,7],[40,6],[30,5],[20,4],[10,3]];
+  const PARAMS=[
+    {h2:'Safety consciousness',h3:'Safety Consciousness',subs:[['Dress code',2],['Use PPE',8],['Apply/practice safety',5]]},
+    {h2:'Workplace hygiene & Economical use of materials',h3:'Workplace hygiene & Economical use of materials',subs:[['Maintain personal & work place hygiene',3],['Dispose scraps as per standard practice',2],['Select appropriate material & minimize wastage',5]]},
+    {h2:'Attendance & Punctuality',h3:'Attendance / Punctuality',att:true,subs:[['Initiative',3],['Accountability',3],['Participative in work',4]]},
+    {h2:'Ability to follow written instructions',h3:'Ability to follow Manuals/Written instructions',subs:[['Select right manual',1],['Search for appropriate topic',2],['Read & interpret the manual',2]]},
+    {h2:'Application of knowledge',h3:'Application of Knowledge',subs:[['Plan the work',4],['Select appropriate tools & equipments',3],['Review the work',3]]},
+    {h2:'Skill to handle tools & equipments',h3:'Skills to handle tools & Equipments',subs:[['Handle and use tools & equipments',4],['Maintain safety in handling',3],['Care & Maintenance',3]]},
+    {h2:'Speed in doing work',h3:'Speed in doing work',subs:[['Properly sequence the work',3],['Use appropriate technique',5],['Review the work during execution',2]]},
+    {h2:'Quality in workmanship',h3:'Quality in workmanship',subs:[['Achieve work with high accuracy',7],['Conform to requirement',3],['Satisfy the purpose',5]]},
+    {h2:'Viva',h3:'VIVA',subs:[['Response with clarity',5],['Technical understanding',7],['Conscious towards job role',3]]}
+  ];
+  const pmax=p=>p.subs.reduce((a,s)=>a+s[1],0);
+  const isNum=v=>v!==''&&v!==null&&v!==undefined&&!isNaN(+v);
+  function lookup(tbl,v){for(const [t,r] of tbl) if(v>=t) return r; return null;}
+  // Largest-remainder split: share `total` across weights in proportion, whole numbers, parts add up exactly to total.
+  // Ties on the fractional part go to the larger weight, then to the earlier position.
+  function split(total,weights){
+    const W=weights.reduce((a,b)=>a+b,0), n=weights.length;
+    const part=weights.map(w=>Math.floor(total*w/W));
+    const rem=weights.map((w,i)=>(total*w)%W);
+    let left=total-part.reduce((a,b)=>a+b,0);
+    const order=[...Array(n).keys()].sort((a,b)=>rem[b]-rem[a]||weights[b]-weights[a]||a-b);
+    for(let k=0;k<left;k++) part[order[k%n]]++;
+    return part;
+  }
+  // TP/TT/AT -> final mark. TP is out of tpMax (default 100), TT out of ttMax (default 100), AT = attendance %.
+  // Both are scaled to 100 before averaging (tpMax 40 gives TP x 2.5, as in the old Excel tool).
+  function calcMark(e,rank,o){
+    o=o||{}; const tpMax=+o.tpMax>0?+o.tpMax:100, ttMax=+o.ttMax>0?+o.ttMax:100;
+    const hasOv=isNum(e.atcOv), auto=isNum(e.at)?lookup(ATC,+e.at):null;
+    if(!(isNum(e.tp)&&isNum(e.tt)&&(isNum(e.at)||hasOv))) return {mark:null,tot:null,rank:null,atc:hasOv?Math.max(0,Math.min(10,Math.round(+e.atcOv))):auto,atcAuto:auto,manual:hasOv,issue:null};
+    const tot=Math.round((+e.tp*100/tpMax+ +e.tt*100/ttMax)/2);
+    const rk=lookup(rank||RANK,tot), atc=hasOv?Math.max(0,Math.min(10,Math.round(+e.atcOv))):auto;
+    let issue=null;
+    if(rk===null) issue='TOT '+tot+' is below the lowest rank band';
+    else if(atc===null) issue='Attendance below 10% has no band';
+    return {mark:(rk===null||atc===null)?null:rk-(10-atc),tot,rank:rk,atc,atcAuto:auto,manual:hasOv,issue};
+  }
+  // Annexure 2: split a final mark across the parameters in proportion to each one's maximum.
+  // If attScore is given (TP/TT/AT mode) the attendance parameter gets exactly that (never more than the mark)
+  // and the rest of the mark is shared among the other parameters in proportion to their maximums
+  // (the attendance share is raised only if the other divisions would otherwise exceed their maximums).
+  function annex2(mark,attScore,params){
+    params=params||PARAMS;
+    if(!isNum(mark)||+mark===0) return params.map(()=>null);
+    const m=Math.min(100,Math.round(+mark));
+    const ai=params.findIndex(p=>p.att);
+    if(ai>=0&&attScore!==null&&attScore!==undefined){
+      const idx=params.map((_,i)=>i).filter(i=>i!==ai), cap=idx.reduce((s,i)=>s+pmax(params[i]),0);
+      const a=Math.max(Math.min(+attScore,m),m-cap); // only exceeds ATC if an upward adjustment leaves more marks than the other divisions can hold
+      const parts=split(m-a,idx.map(i=>pmax(params[i])));
+      const out=new Array(params.length).fill(0); out[ai]=a; idx.forEach((i,k)=>out[i]=parts[k]); return out;
+    }
+    return split(m,params.map(pmax));
+  }
+  // Annexure 3: split each parameter total across its sub-components in proportion to their maximums.
+  function annex3(totals,params){
+    params=params||PARAMS;
+    return params.map((p,i)=>{
+      const t=totals[i];
+      if(t===null||t===undefined) return p.subs.map(()=>null);
+      return split(t,p.subs.map(s=>s[1]));});
+  }
+  // Scale a final mark by pct percent (e.g. +5 -> x1.05), whole marks, kept within 0-100.
+  function adjust(mark,pct){
+    if(mark===null||mark===undefined||!pct) return mark;
+    return Math.max(0,Math.min(100,Math.round(mark*(100+pct)/100)));
+  }
+  return {RANK,ATC,PARAMS,pmax,isNum,lookup,split,calcMark,annex2,annex3,adjust};
+})();
+/*CORE-END*/
+
+/*DEFAULTS*/
+const DEF={
+ "setup": {
+  "accessor": "DINOJ M KHAN",
+  "iti": "GOVT ITI DHANUVACHAPURAM",
+  "trade": "COPA",
+  "batch": "B",
+  "year": 2026,
+  "duration": "1 YEAR"
+ },
+ "los": [
+  {
+   "name": "Install and setup operating system and related software in a computer following safety precautions."
+  },
+  {
+   "name": "Create, format and edit document using word processing application software."
+  },
+  {
+   "name": "Create and customize slides for presentation."
+  },
+  {
+   "name": "Create, format, edit and develop a workbook by using spreadsheet application software."
+  },
+  {
+   "name": "Create workbooks with advanced formulae, macros, charts, pivot tables and demonstrate ability to use Power tools."
+  },
+  {
+   "name": "Create and manage database file using MySQL."
+  },
+  {
+   "name": "Install, setup/configure, troubleshoot and secure computer network including Internet."
+  },
+  {
+   "name": "Develop web pages using HTML and CSS."
+  },
+  {
+   "name": "Develop web pages using Java Script."
+  },
+  {
+   "name": "Browse, select and transact using E-commerce websites."
+  },
+  {
+   "name": "Explain Cloud concepts & services and Describe Application Development Life Cycle."
+  },
+  {
+   "name": "Secure information from Internet by using cyber security concept."
+  },
+  {
+   "name": "Demonstrate AI Integration with different applications"
+  },
+  {
+   "name": "Write programs using Python language."
+  }
+ ],
+ "students": [
+  {
+   "name": "ABHAYA D",
+   "father": "VINOD M",
+   "roll": "26"
+  },
+  {
+   "name": "ABHIRAMI A S",
+   "father": "ANIL KUMAR K",
+   "roll": "44"
+  },
+  {
+   "name": "ABHIRAMI A S",
+   "father": "ANIL KUMAR M",
+   "roll": "422"
+  },
+  {
+   "name": "ABHISHEK A R",
+   "father": "RAJASEKHARAN NAIR K",
+   "roll": "107"
+  },
+  {
+   "name": "ABIN. B.S",
+   "father": "BINU .A",
+   "roll": "216"
+  },
+  {
+   "name": "AHALLYA R",
+   "father": "AJITHKUTTAN A",
+   "roll": "601"
+  },
+  {
+   "name": "AJAY B",
+   "father": "RAJAKUMAR S",
+   "roll": "264"
+  },
+  {
+   "name": "AJESH C S",
+   "father": "CHRISTUKUMARAN N",
+   "roll": "283"
+  },
+  {
+   "name": "ALAN S S",
+   "father": "SHAJI T K",
+   "roll": "271"
+  },
+  {
+   "name": "ANUSHMA. A.J",
+   "father": "JAGADEESH. C",
+   "roll": "32"
+  },
+  {
+   "name": "ASHIN RAJ D L",
+   "father": "DHARMARAJ T",
+   "roll": "15"
+  },
+  {
+   "name": "CHRISTHUDAS MARTIN",
+   "father": "MARTIN",
+   "roll": "269"
+  },
+  {
+   "name": "GAYATHRI S",
+   "father": "SUNILKUMAR S S",
+   "roll": "49"
+  },
+  {
+   "name": "LALSURYA.A.S",
+   "father": "AJIKUMAR.S",
+   "roll": "254"
+  },
+  {
+   "name": "MAHITHA. R. B",
+   "father": "BIJU. S",
+   "roll": "33"
+  },
+  {
+   "name": "NANDHAN C S",
+   "father": "CHANDRAN T",
+   "roll": "369"
+  },
+  {
+   "name": "SAJNA S",
+   "father": "FAISAL A",
+   "roll": "37"
+  },
+  {
+   "name": "SANU S B",
+   "father": "SURESH L",
+   "roll": "230"
+  },
+  {
+   "name": "SHINU S",
+   "father": "SHAJI D",
+   "roll": "402"
+  },
+  {
+   "name": "SONA S B",
+   "father": "SANTHOSH T",
+   "roll": "34"
+  },
+  {
+   "name": "VARSHA V P",
+   "father": "VARGHESE V",
+   "roll": "403"
+  },
+  {
+   "name": "VIJIL V",
+   "father": "VINU D",
+   "roll": "186"
+  },
+  {
+   "name": "VIVEK S P",
+   "father": "SUJATHAN S",
+   "roll": "100"
+  }
+ ]
+};
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let uid=1; const newId=()=>'s'+Date.now().toString(36)+(uid++);
+const KEY='iti-annexure-app-v2';
+/* In-page dialogs (browser confirm()/alert() are blocked inside Claude's artifact view) */
+function dialog(o){
+  return new Promise(res=>{
+    const d=$('#dlg'),inp=$('#dlgInput'),yes=$('#dlgYes'),no=$('#dlgNo');
+    $('#dlgTitle').textContent=o.title||'';$('#dlgMsg').textContent=o.msg||'';
+    yes.textContent=o.ok||'OK';yes.className='b '+(o.danger?'danger':'p');no.style.display=o.cancel===false?'none':'';
+    inp.hidden=!o.typed;inp.value='';inp.placeholder=o.typed?'Type '+o.typed+' to confirm':'';
+    const ready=()=>!o.typed||inp.value.trim()===o.typed;
+    const sync=()=>{yes.disabled=!ready();};sync();
+    const done=v=>{d.classList.remove('on');yes.onclick=no.onclick=inp.oninput=null;document.removeEventListener('keydown',key);res(v);};
+    const key=e=>{if(e.key==='Escape')done(false);else if(e.key==='Enter'&&ready())done(true);};
+    document.addEventListener('keydown',key);
+    inp.oninput=sync;yes.onclick=()=>{if(ready())done(true);};no.onclick=()=>done(false);
+    d.classList.add('on');setTimeout(()=>(o.typed?inp:yes).focus(),30);
+  });
+}
+const confirmBox=(msg,o)=>dialog(Object.assign({msg,title:'Please confirm',ok:'Yes, continue'},o||{}));
+const notify=(msg,title)=>dialog({msg,title:title||'Note',cancel:false});
+
+function freshState(){
+  const st={
+    setup:Object.assign({industry:'',location:'',exam:'I/II',colsPer:14,rowsPer:24,pass:60,mode:'direct'},DEF.setup),
+    los:DEF.los.map((l,i)=>({no:i+1,name:l.name,date:''})),
+    students:DEF.students.map(s=>Object.assign({id:newId()},s)),
+    marks:{}, rank:Core.RANK.map(r=>r.slice()), params:JSON.parse(JSON.stringify(Core.PARAMS)), lo:0
+  };
+  return st;
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){S=null;}
+if(!S||!S.setup) S=freshState();
+let saveT=null;
+function save(){
+  clearTimeout(saveT);
+  saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));$('#saved').textContent='Saved in this browser';$('#saved').className='tag ok';}catch(e){$('#saved').textContent='Not saved (browser blocked storage) – use Backup';$('#saved').className='tag warn';}},250);
+  if(window.__cloudPush)window.__cloudPush();
+}
+const mk=(sid,i)=>((S.marks[sid]||(S.marks[sid]={}))[i]||(S.marks[sid][i]={}));
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+
+/* ---------- derived results ---------- */
+const loAdj=i=>(S.los[i]&&+S.los[i].adj)||0;
+const loOpts=i=>({tpMax:(S.los[i]&&+S.los[i].tpMax)||100,ttMax:(S.los[i]&&+S.los[i].ttMax)||100});
+function result(st,i){
+  const e=(S.marks[st.id]||{})[i]||{};
+  if(S.setup.mode==='calc'){
+    const c=Core.calcMark(e,S.rank,loOpts(i));
+    return {mark:Core.adjust(c.mark,loAdj(i)),att:c.atc,c,issue:c.issue};
+  }
+  return {mark:Core.isNum(e.m)?+e.m:null,att:null,c:null,issue:null};
+}
+function a2vals(st,i){const r=result(st,i);return {r,v:Core.annex2(r.mark,r.att,S.params)};}
+const loHasMarks=i=>S.students.some(st=>result(st,i).mark!==null&&result(st,i).mark!==0);
+
+/* ---------- tabs ---------- */
+function show(s){
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));
+  $$('.sec').forEach(x=>x.classList.toggle('on',x.id==='s-'+s));
+  if(s==='marks') renderMarks();
+  if(s==='print') renderPrint();
+  window.scrollTo(0,0);
+}
+$('#nav').addEventListener('click',e=>{if(e.target.dataset.s)show(e.target.dataset.s);});
+
+/* ---------- setup ---------- */
+const FIELDS=[['accessor','Name of assessor','text'],['iti','ITI name','text'],['trade','Trade','text'],['batch','Batch (A/B)','text'],['year','Year of enrollment','text'],['duration','Course duration','text'],['industry','Industry name & address (optional)','text'],['location','Assessment location (optional)','text'],['exam','Examination','text']];
+function renderSetup(){
+  $('#setupGrid').innerHTML=FIELDS.map(([k,l])=>`<label class="f">${l}<input data-k="${k}" value="${esc(S.setup[k])}"></label>`).join('');
+  $('#colsTxt').textContent=S.setup.colsPer;
+  $('#loTable').innerHTML='<tr><th class="n" style="width:54px">LO no.</th><th>Name of learning outcome</th><th style="width:150px">Date of assessment</th></tr>'+
+    S.los.map((l,i)=>`<tr><td class="n"><input data-lo="${i}" data-f="no" value="${esc(l.no)}" style="text-align:center"></td><td><input data-lo="${i}" data-f="name" value="${esc(l.name)}"></td><td><input type="date" data-lo="${i}" data-f="date" value="${esc(l.date)}"></td></tr>`).join('');
+}
+$('#setupGrid').addEventListener('input',e=>{const k=e.target.dataset.k;if(k){S.setup[k]=e.target.value;save();}});
+$('#loTable').addEventListener('input',e=>{const t=e.target,i=t.dataset.lo;if(i==null)return;S.los[i][t.dataset.f]=t.value;save();});
+$('#addLo').onclick=()=>{S.los.push({no:S.los.length?(+S.los[S.los.length-1].no||S.los.length)+1:1,name:'',date:''});save();renderSetup();};
+function parseLos(txt,startNo){
+  const out=[];let n=startNo;
+  txt.replace(/\r/g,'').split('\n').forEach(line=>{
+    if(!line.trim())return;
+    const c=line.split('\t').map(x=>x.trim());
+    let no=null,name;
+    if(c.length>=2&&/^(LO\s*)?\d+\.?$/i.test(c[0])){no=parseInt(c[0].replace(/\D/g,''),10);name=c.slice(1).filter(Boolean).join(' ');}
+    else{name=c.filter(Boolean).join(' ');const m=name.match(/^(?:LO\s*)?(\d+)\s*[.):\-]\s*(.+)$/i);if(m){no=parseInt(m[1],10);name=m[2].trim();}}
+    if(!name)return;
+    if(no===null)no=n; n=no+1;
+    out.push({no,name,date:''});
+  });
+  return out;
+}
+$('#loReplace').onclick=async()=>{const a=parseLos($('#pasteLo').value,1);if(!a.length)return notify('Nothing to add. Paste the learning outcomes from Excel into the box first.');
+  if(S.los.length&&!await confirmBox('Replace the current '+S.los.length+' learning outcomes with the '+a.length+' pasted?\nAll marks entered so far will be cleared.',{danger:true,ok:'Replace'}))return;
+  S.los=a;S.lo=0;S.students.forEach(s=>{S.marks[s.id]={};});$('#pasteLo').value='';save();renderSetup();};
+$('#loAppend').onclick=()=>{const last=S.los.length?(+S.los[S.los.length-1].no||S.los.length):0;const a=parseLos($('#pasteLo').value,last+1);if(!a.length)return notify('Nothing to add. Paste the learning outcomes from Excel into the box first.');
+  S.los.push(...a);$('#pasteLo').value='';save();renderSetup();};
+$('#delLo').onclick=async()=>{if(S.los.length<1)return;const i=S.los.length-1;
+  if(await confirmBox('Remove LO'+S.los[i].no+' and all marks entered for it?',{danger:true,ok:'Remove LO'})){S.students.forEach(s=>{if(S.marks[s.id])delete S.marks[s.id][i];});S.los.pop();if(S.lo>=S.los.length)S.lo=0;save();renderSetup();}};
+$('#delAllLo').onclick=async()=>{if(!S.los.length)return notify('There are no learning outcomes to delete.');
+  if(await confirmBox('This deletes all '+S.los.length+' learning outcomes and every mark entered for them. Student names are kept.\n\nThis cannot be undone (take a Backup first if unsure).',{title:'Delete all learning outcomes',typed:'DELETE',danger:true,ok:'Delete all LOs'})){
+    S.los=[];S.lo=0;S.students.forEach(s=>{S.marks[s.id]={};});save();renderSetup();}};
+/* ---------- students ---------- */
+function parseStudents(txt){
+  return txt.replace(/\r/g,'').split('\n').map(l=>l.split('\t')).filter(c=>c[0]&&c[0].trim()).map(c=>({id:newId(),name:c[0].trim(),father:(c[1]||'').trim(),roll:(c[2]||'').trim()}));
+}
+function renderStudents(){
+  $('#stuTable').innerHTML='<tr><th class="n" style="width:40px">#</th><th>Student name</th><th>Father\'s / Mother\'s name</th><th style="width:110px">Roll no.</th><th style="width:44px"></th></tr>'+
+   S.students.map((s,i)=>`<tr><td class="n">${i+1}</td><td><input data-i="${i}" data-f="name" value="${esc(s.name)}"></td><td><input data-i="${i}" data-f="father" value="${esc(s.father)}"></td><td><input data-i="${i}" data-f="roll" value="${esc(s.roll)}"></td><td class="n"><button class="b d" data-del="${i}" style="padding:1px 8px">×</button></td></tr>`).join('');
+  $('#stuCount').textContent=S.students.length+' students';
+}
+$('#stuTable').addEventListener('input',e=>{const t=e.target;if(t.dataset.i==null)return;S.students[t.dataset.i][t.dataset.f]=t.value;save();});
+$('#stuTable').addEventListener('click',async e=>{const d=e.target.dataset.del;if(d==null)return;if(await confirmBox('Delete '+(S.students[d].name||'this student')+' and their marks?',{danger:true,ok:'Delete'})){delete S.marks[S.students[d].id];S.students.splice(d,1);save();renderStudents();}});
+$('#stuReplace').onclick=async()=>{const a=parseStudents($('#pasteStu').value);if(!a.length)return notify('Nothing to add. Paste name, father name, roll no. from Excel into the box first.');if(S.students.length&&!await confirmBox('Replace the current '+S.students.length+' students with the '+a.length+' pasted? Their marks will be cleared.',{danger:true,ok:'Replace'}))return;S.students=a;S.marks={};$('#pasteStu').value='';save();renderStudents();};
+$('#stuAppend').onclick=()=>{const a=parseStudents($('#pasteStu').value);if(!a.length)return notify('Nothing to add. Paste name, father name, roll no. from Excel into the box first.');S.students.push(...a);$('#pasteStu').value='';save();renderStudents();};
+$('#stuSort').onclick=()=>{S.students.sort((a,b)=>a.name.localeCompare(b.name));save();renderStudents();};
+$('#stuClear').onclick=async()=>{if(!S.students.length)return notify('The student list is already empty.');if(await confirmBox('This removes all '+S.students.length+' students and every mark entered for them.\n\nThis cannot be undone (take a Backup first if unsure).',{title:'Clear all students',typed:'DELETE',danger:true,ok:'Clear all'})){S.students=[];S.marks={};save();renderStudents();}};
+$('#stuAdd').onclick=()=>{S.students.push({id:newId(),name:'',father:'',roll:''});save();renderStudents();};
+
+/* ---------- marks ---------- */
+function renderMarks(){
+  const calc=S.setup.mode==='calc';
+  if(!S.los.length){$('#maxWrap').style.display='none';$('#loPickWrap').style.display='none';$('#summaryCard').style.display='none';$('#markHint').textContent='';$('#marksWrap').innerHTML='<p class="hint" style="padding:12px">There are no learning outcomes. Add them in step 1 (Setup).</p>';return;}
+  $('#mode').value=S.setup.mode;
+  $('#loPickWrap').style.display=calc?'':'none';$('#maxWrap').style.display=calc?'flex':'none';
+  $('#summaryCard').style.display=calc?'':'none';
+  $('#loPick').innerHTML=S.los.map((l,i)=>`<option value="${i}">LO${esc(l.no)} – ${esc(l.name.slice(0,60))}</option>`).join('');
+  if(S.lo>=S.los.length)S.lo=0; $('#loPick').value=S.lo;
+  if(!S.students.length){$('#marksWrap').innerHTML='<p class="hint" style="padding:12px">Add students first (step 2).</p>';return;}
+  if(!calc){
+    $('#markHint').textContent='Type the final mark (0–100) for each student under each LO. You can copy a block of cells from Excel and paste it into the first cell; Enter moves down.';
+    $('#marksWrap').innerHTML='<table class="t mk"><tr><th class="n">#</th><th>Student</th>'+S.los.map(l=>`<th class="n">LO${esc(l.no)}</th>`).join('')+'</tr>'+
+      S.students.map((s,r)=>`<tr><td class="n">${r+1}</td><td style="white-space:nowrap">${esc(s.name)}</td>`+S.los.map((l,c)=>`<td class="n"><input inputmode="numeric" data-g="m" data-r="${r}" data-c="${c}" value="${esc(mk(s.id,c).m??'')}"></td>`).join('')+'</tr>').join('')+'</table>';
+  }else{
+    const i=S.lo,o=loOpts(i);
+    $('#tpMax').value=o.tpMax;$('#ttMax').value=o.ttMax;$('#adj').value=loAdj(i);const ad=loAdj(i)!==0;
+    $('#markHint').innerHTML='Enter <b>TP</b> (practical marks), <b>TT</b> (theory marks) and <b>AT</b> (attendance %) for the chosen LO, exactly as scored. Set the maximum for practical and theory above (default 100 and 100); both are scaled to 100 and averaged to get TOT. The rank table then gives the band mark and the attendance band is deducted, as in your Excel tool. <b>Adjust final marks</b> raises or lowers the final mark of every student for this LO by that percentage (typed marks are untouched; 0 restores the originals). The <b>ATC</b> column is automatic (from AT %) but you can type a number (0–10) to override it; your value is kept (shown highlighted) until you clear the box. Paste three columns from Excel into the first TP cell.';
+    $('#marksWrap').innerHTML='<table class="t mk"><tr><th class="n">#</th><th>Student</th><th class="n">TP /'+o.tpMax+'</th><th class="n">TT /'+o.ttMax+'</th><th class="n">AT %</th><th class="n">TOT</th><th class="n">Rank mark</th><th class="n" title="Worked out from AT %. Type a number (0-10) to override; clear the box to go back to automatic.">ATC ✎</th>'+(ad?'<th class="n">Calc mark</th>':'')+'<th class="n">Final mark'+(ad?' ('+(loAdj(i)>0?'+':'')+loAdj(i)+'%)':'')+'</th></tr>'+
+      S.students.map((s,r)=>{const e=mk(s.id,i);return `<tr data-sid="${s.id}"><td class="n">${r+1}</td><td style="white-space:nowrap">${esc(s.name)}</td>`+
+        ['tp','tt','at'].map((f,c)=>`<td class="n"><input inputmode="decimal" data-g="${f}" data-r="${r}" data-c="${c}" value="${esc(e[f]??'')}"></td>`).join('')+
+        '<td class="calc c-tot"></td><td class="calc c-rank"></td><td class="n"><input class="c-atc" inputmode="numeric" data-g="atcOv" data-r="'+r+'" data-c="3"></td>'+(loAdj(i)!==0?'<td class="calc c-raw"></td>':'')+'<td class="calc mark c-mark"></td></tr>';}).join('')+'</table>';
+    S.students.forEach(s=>updateCalcRow(s.id));
+    $$('#marksWrap input[data-g=tp],#marksWrap input[data-g=tt]').forEach(checkRange);
+    renderSummary();
+  }
+}
+function updateCalcRow(sid){
+  const tr=$(`tr[data-sid="${sid}"]`);if(!tr)return;
+  const st=S.students.find(s=>s.id===sid),c=Core.calcMark(mk(sid,S.lo),S.rank,loOpts(S.lo));
+  const set=(cl,v)=>{tr.querySelector(cl).textContent=v===null||v===undefined?'':v;};
+  set('.c-tot',c.tot);set('.c-rank',c.rank);
+  const ai=tr.querySelector('.c-atc');
+  if(document.activeElement!==ai)ai.value=c.atc===null||c.atc===undefined?'':c.atc;
+  ai.classList.toggle('ov',!!c.manual);ai.title=c.manual?'Manually set (automatic value would be '+(c.atcAuto===null?'none':c.atcAuto)+'). Clear the box to go back to automatic.':'Automatic from AT %. Type a number to override.';
+  if(tr.querySelector('.c-raw'))set('.c-raw',c.mark);
+  set('.c-mark',Core.adjust(c.mark,loAdj(S.lo)));
+  tr.querySelector('.c-mark').title=c.issue||'';
+  tr.querySelector('.c-mark').style.color=c.issue?'#b42318':'';
+  if(c.issue)tr.querySelector('.c-mark').textContent='!';
+}
+function renderSummary(){
+  $('#summaryWrap').innerHTML='<table class="t"><tr><th class="n">#</th><th>Student</th>'+S.los.map(l=>`<th class="n">LO${esc(l.no)}</th>`).join('')+'</tr>'+
+    S.students.map((s,r)=>`<tr><td class="n">${r+1}</td><td style="white-space:nowrap">${esc(s.name)}</td>`+S.los.map((l,i)=>{const x=result(s,i);return `<td class="n">${x.mark===null?'':x.mark}</td>`;}).join('')+'</tr>').join('')+'</table>';
+}
+$('#mode').onchange=e=>{S.setup.mode=e.target.value;save();renderMarks();};
+function setMax(f,v){S.los[S.lo][f]=v;save();S.students.forEach(s=>updateCalcRow(s.id));renderSummary();
+  const th=$('#marksWrap tr th:nth-child(3)');if(th){const o=loOpts(S.lo);th.textContent='TP /'+o.tpMax;$('#marksWrap tr th:nth-child(4)').textContent='TT /'+o.ttMax;}
+  $$('#marksWrap input[data-g=tp],#marksWrap input[data-g=tt]').forEach(checkRange);}
+function checkRange(inp){const g=inp.dataset.g;if(g!=='tp'&&g!=='tt')return;const o=loOpts(S.lo),mx=g==='tp'?o.tpMax:o.ttMax;inp.style.background=(inp.value!==''&&+inp.value>mx)?'#fdf0dc':'';inp.title=inp.style.background?'More than the maximum ('+mx+')':'';}
+$('#tpMax').onchange=e=>{const v=+e.target.value;if(v>0)setMax('tpMax',v);else e.target.value=loOpts(S.lo).tpMax;};
+$('#ttMax').onchange=e=>{const v=+e.target.value;if(v>0)setMax('ttMax',v);else e.target.value=loOpts(S.lo).ttMax;};
+function setAdj(v){v=clamp(Math.round(+v)||0,-90,100);S.los[S.lo].adj=v;save();renderMarks();}
+$('#adj').onchange=e=>setAdj(e.target.value);
+$('#adjUp').onclick=()=>setAdj(loAdj(S.lo)+1);
+$('#adjDn').onclick=()=>setAdj(loAdj(S.lo)-1);
+$('#maxAll').onclick=()=>{const a=+$('#tpMax').value,b=+$('#ttMax').value;if(!(a>0&&b>0))return;const p=loAdj(S.lo);S.los.forEach(l=>{l.tpMax=a;l.ttMax=b;l.adj=p;});save();renderMarks();};
+$('#loPick').onchange=e=>{S.lo=+e.target.value;save();renderMarks();};
+const mw=$('#marksWrap');
+function applyInput(inp){
+  const sid=S.students[+inp.dataset.r].id,g=inp.dataset.g,i=S.setup.mode==='calc'?S.lo:+inp.dataset.c;
+  let v=inp.value.trim();
+  if(v!==''&&isNaN(+v)){inp.style.background='#fde7e5';return;} inp.style.background='';
+  if(g==='atcOv'){
+    if(v===''){delete mk(sid,i).atcOv;}
+    else{const n=clamp(Math.round(+v),0,10);mk(sid,i).atcOv=n;inp.style.background=(+v<0||+v>10)?'#fdf0dc':'';}
+  }else mk(sid,i)[g]=v===''?'':(g==='m'?Math.round(+v):+v);
+  if(g==='m'&&v!==''&&(+v<0||+v>100))inp.style.background='#fdf0dc';
+  checkRange(inp);
+  if(S.setup.mode==='calc'){updateCalcRow(sid);renderSummary();}
+  save();
+}
+mw.addEventListener('input',e=>{if(e.target.dataset.g)applyInput(e.target);});
+mw.addEventListener('focusout',e=>{if(e.target.dataset&&e.target.dataset.g==='atcOv'){const sid=S.students[+e.target.dataset.r].id;e.target.blur();updateCalcRow(sid);}});
+mw.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.dataset.g){e.preventDefault();const n=mw.querySelector(`input[data-g="${e.target.dataset.g}"][data-r="${+e.target.dataset.r+(e.shiftKey?-1:1)}"][data-c="${e.target.dataset.c}"]`);if(n){n.focus();n.select();}}
+});
+mw.addEventListener('paste',e=>{
+  const t=e.target;if(!t.dataset.g)return;
+  const txt=(e.clipboardData||window.clipboardData).getData('text');if(!txt)return;
+  e.preventDefault();
+  const rows=txt.replace(/\r/g,'').replace(/\n+$/,'').split('\n').map(r=>r.split('\t'));
+  const r0=+t.dataset.r,c0=+t.dataset.c,calc=S.setup.mode==='calc',cols=['tp','tt','at','atcOv'];
+  rows.forEach((row,a)=>row.forEach((val,b)=>{
+    const g=calc?cols[c0+b]:'m',c=c0+b; if(!g)return;
+    const inp=mw.querySelector(`input[data-g="${g}"][data-r="${r0+a}"][data-c="${c}"]`);
+    if(inp){inp.value=val.trim();applyInput(inp);}
+  }));
+});
+
+/* ---------- print pages ---------- */
+const fmtDate=d=>{if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;};
+function a2Page(i,chunk,pageNo,pages){
+  const lo=S.los[i],rows=+S.setup.rowsPer||24,P=S.params,s=S.setup;
+  let body='';
+  for(let k=0;k<rows;k++){
+    const st=chunk[k];
+    if(st){const {r,v}=a2vals(st,i);const m=r.mark;
+      body+=`<tr><td class="c">${S.students.indexOf(st)+1}</td><td>${esc(st.name)}</td><td>${esc(st.father)}</td>${v.map(x=>`<td class="c">${x===null?'':x}</td>`).join('')}<td class="c">${m===null||+m===0?'':m}</td><td class="c">${m===null||+m===0?'':(m>=+S.setup.pass?'Y':'N')}</td></tr>`;}
+    else body+=`<tr><td class="c">&nbsp;</td><td></td><td></td>${P.map(()=>'<td></td>').join('')}<td></td><td></td></tr>`;
+  }
+  const colw=P.map(()=> '15mm').join('');
+  return `<section class="sheet a2"><div class="t1">ANNEXURE 2</div><div class="t2">Format of Internal Assessment</div>
+  <table class="info"><colgroup><col style="width:62%"><col style="width:38%"></colgroup>
+   <tr><td>Name &amp; Address of the Assessor : ${esc(s.accessor)}</td><td>Year of Enrollment : ${esc(s.year)}</td></tr>
+   <tr><td>Name &amp; Address of the ITI : ${esc(s.iti)}</td><td>Date of Assessment : ${esc(fmtDate(lo.date))}</td></tr>
+   <tr><td>Name &amp; Address of the Industry: ${esc(s.industry)}</td><td>Assessment Location (Industry/ITI) : ${esc(s.location)}</td></tr>
+   <tr><td>Trade Name : ${esc(s.trade)}&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Examination : ${esc(s.exam)}</td><td>Duration of Trade/Course : ${esc(s.duration)}</td></tr>
+   <tr><td colspan="2">Learning outcome: ${esc(lo.no)}. ${esc(lo.name)}</td></tr></table>
+  <table class="main"><colgroup><col style="width:8mm"><col style="width:46mm"><col style="width:50mm">${P.map(()=>'<col style="width:14.4mm">').join('')}<col style="width:15mm"><col style="width:13mm"></colgroup>
+   <tr><th rowspan="2">Sl.<br>No.</th><th colspan="2" style="text-align:left">Maximum marks (Total 100 marks)</th>${P.map(p=>`<th>${Core.pmax(p)}</th>`).join('')}<th rowspan="2" class="vert"><div>Total internal assessment Marks</div></th><th rowspan="2" class="vert"><div>Result (Y/N)</div></th></tr>
+   <tr><th>Candidate Name</th><th>Father's/Mother's Name</th>${P.map(p=>`<th class="vert"><div>${esc(p.h2)}</div></th>`).join('')}</tr>
+   ${body}</table>
+  <div class="sig"><span>Group Instructor</span><span>Principal/Vice Principal</span><span>${esc(s.accessor)}</span></div></section>`;
+}
+function a3Page(st,page){
+  const C=Math.max(1,+S.setup.colsPer||14),P=S.params,s=S.setup;
+  const start=page*C;
+  const cols=[...Array(C).keys()].map(k=>start+k);
+  const res=cols.map(i=>i<S.los.length?a2vals(st,i):null);
+  const sub=res.map(x=>x?Core.annex3(x.v,P):null);
+  const half=Math.ceil(C/2);
+  let rows='';
+  P.forEach((p,pi)=>{
+    const n=p.subs.length,mx=Core.pmax(p);
+    p.subs.forEach((sc,j)=>{
+      rows+=`<tr class="g">`+(j===0?`<td class="c b" rowspan="${n+1}">${pi+1}</td><td class="b" rowspan="${n+1}" style="font-size:7.6pt">${esc(p.h3)}</td>`:'')+
+        `<td>${esc(sc[0])}</td><td class="c">${sc[1]}</td>`+cols.map((_,k)=>`<td class="c">${sub[k]&&sub[k][pi][j]!==null?sub[k][pi][j]:''}</td>`).join('')+'</tr>';
+    });
+    rows+=`<tr class="g"><td class="c b">Total</td><td class="c b">${mx}</td>`+cols.map((_,k)=>`<td class="c b">${res[k]&&res[k].v[pi]!==null?res[k].v[pi]:''}</td>`).join('')+'</tr>';
+  });
+  const gt=cols.map((_,k)=>{const m=res[k]?res[k].r.mark:null;return `<td class="c b">${m===null||+m===0?'':m}</td>`;}).join('');
+  const sigRow=lab=>`<tr class="sg"><td colspan="4">${lab}</td>${cols.map(()=>'<td></td>').join('')}</tr>`;
+  return `<section class="sheet a3"><table><colgroup><col style="width:8mm"><col style="width:23mm"><col style="width:46mm"><col style="width:11mm">${cols.map(()=>`<col style="width:${(198-12-88)/C}mm">`).join('')}</colgroup>
+   <tr class="h"><td colspan="4" class="ttl">ANNEXURE III</td><td colspan="${half}" class="lab">NAME OF STUDENT</td><td colspan="${C-half}" class="lab">ROLL NO</td></tr>
+   <tr class="h"><td colspan="4">Break up of marks against each assessment parameters</td><td colspan="${half}" class="nm">${esc(st.name)}</td><td colspan="${C-half}" class="nm">${esc(st.roll)}</td></tr>
+   <tr class="h"><td colspan="4" style="font-size:7pt;height:7mm">(The below assessment parameters are only an indicative for instructors for reference only)</td><td colspan="${C}" class="lab" style="font-size:8.5pt">LEARNING OUTCOME NUMBER</td></tr>
+   <tr class="h"><td colspan="4" class="b" style="font-size:9pt">${esc(s.iti)}&nbsp;&nbsp; ${esc(s.trade)} - ${esc(s.batch)}</td>${cols.map(i=>`<td class="lon">${i<S.los.length?esc(S.los[i].no):''}</td>`).join('')}</tr>
+   <tr class="h"><td class="c b" rowspan="1">Sl.<br>No.</td><td class="c b">Assessment Parameters</td><td class="c b">Component of Assessment parameters</td><td class="c b" style="font-size:7pt">Max. marks Break up</td><td colspan="${C}" class="c b">Marks Awarded</td></tr>
+   ${rows}
+   <tr class="g"><td colspan="3" class="c b">GRAND TOTAL</td><td class="c b">100</td>${gt}</tr>
+   ${sigRow('Signature of Candidate:')}${sigRow('Signature of Instructor:')}${sigRow('Signature of Group instructor:')}
+  </table></section>`;
+}
+function plan(){
+  const what=$('#what').value,out={a2:[],a3:[]};
+  if(!S.los.length)return out;
+  const rows=Math.max(1,+S.setup.rowsPer||24);
+  if(what!=='a3'){
+    const sel=$('#pLo').value;
+    const los=sel==='all'?S.los.map((_,i)=>i):[+sel];
+    los.forEach(i=>{
+      if(sel==='all'&&$('#skipEmpty').checked&&!loHasMarks(i))return;
+      const chunks=Math.max(1,Math.ceil(S.students.length/rows));
+      for(let c=0;c<chunks;c++)out.a2.push(()=>a2Page(i,S.students.slice(c*rows,(c+1)*rows),c,chunks));
+    });
+  }
+  if(what!=='a2'){
+    const sel=$('#pStu').value;
+    const sts=sel==='all'?S.students:S.students.filter(s=>s.id===sel);
+    const pages=Math.max(1,Math.ceil(S.los.length/Math.max(1,+S.setup.colsPer||14)));
+    sts.forEach(st=>{for(let p=0;p<pages;p++)out.a3.push(()=>a3Page(st,p));});
+  }
+  return out;
+}
+function renderPrint(){
+  const keepLo=$('#pLo').value||'all',keepSt=$('#pStu').value||'all';
+  $('#pLo').innerHTML='<option value="all">All learning outcomes</option>'+S.los.map((l,i)=>`<option value="${i}">LO${esc(l.no)}</option>`).join('');
+  $('#pStu').innerHTML='<option value="all">All students</option>'+S.students.map(s=>`<option value="${s.id}">${esc(s.name)} (${esc(s.roll)})</option>`).join('');
+  if([...$('#pLo').options].some(o=>o.value===keepLo))$('#pLo').value=keepLo;
+  if([...$('#pStu').options].some(o=>o.value===keepSt))$('#pStu').value=keepSt;
+  $('#colsPer').value=S.setup.colsPer;$('#rowsPer').value=S.setup.rowsPer;$('#passMark').value=S.setup.pass;
+  renderChecks();
+  const p=plan();
+  $('#pages').innerHTML=[...p.a2,...p.a3].map(f=>f()).join('');
+  const per=Math.ceil(S.los.length/Math.max(1,+S.setup.colsPer||14));
+  $('#pgInfo').textContent=`${p.a2.length} Annexure 2 page(s) · ${p.a3.length} Annexure 3 page(s)`+(per>1?` (${per} Annexure 3 pages per student: LO ${S.los[0]?S.los[0].no:1}–${S.los[Math.min(S.setup.colsPer,S.los.length)-1].no}, then from LO ${S.los[S.setup.colsPer].no})`:'');
+}
+function renderChecks(){
+  const msgs=[];
+  if(!S.students.length)msgs.push(['bad','No students entered.']);
+  if(!S.los.length)msgs.push(['bad','No learning outcomes. Add them in Setup.']);
+  S.los.forEach((l,i)=>{
+    let filled=0,miss=[],iss=[],viva=[];
+    S.students.forEach(st=>{const x=result(st,i);
+      if(x.mark===null||+x.mark===0){const e=(S.marks[st.id]||{})[i]||{};const any=Object.values(e).some(v=>v!==''&&v!==undefined);if(any)iss.push(st.name+(x.issue?' ('+x.issue+')':' (incomplete)'));else miss.push(st.name);}
+      else{filled++;}});
+    if(!filled&&!iss.length)return;
+    if(iss.length)msgs.push(['bad',`LO${l.no}: ${iss.length} entr${iss.length>1?'ies':'y'} cannot be converted – ${iss.slice(0,4).join('; ')}${iss.length>4?'…':''}`]);
+    if(miss.length)msgs.push(['warn',`LO${l.no}: no mark for ${miss.length} student(s) – ${miss.slice(0,4).join(', ')}${miss.length>4?'…':''}`]);
+  });
+  const empty=S.los.filter((_,i)=>!loHasMarks(i)).map(l=>'LO'+l.no);
+  if(empty.length&&empty.length<S.los.length)msgs.push(['',`No marks yet for ${empty.join(', ')} – skipped in Annexure 2 (untick “Skip” to print them blank).`]);
+  $('#checks').innerHTML=msgs.length?'<ul class="issues" style="margin:0;padding-left:18px">'+msgs.map(([c,t])=>`<li><span class="tag ${c}">${c==='bad'?'fix':c==='warn'?'note':'info'}</span> ${esc(t)}</li>`).join('')+'</ul>':'<span class="tag ok">All entered marks convert cleanly.</span>';
+}
+['#what','#pLo','#pStu','#skipEmpty'].forEach(s=>$(s).addEventListener('change',renderPrint));
+$('#colsPer').addEventListener('change',e=>{S.setup.colsPer=clamp(+e.target.value||14,1,20);save();renderPrint();});
+$('#rowsPer').addEventListener('change',e=>{S.setup.rowsPer=clamp(+e.target.value||24,10,40);save();renderPrint();});
+$('#passMark').addEventListener('change',e=>{S.setup.pass=clamp(+e.target.value||60,0,100);save();renderPrint();});
+async function saveFile(name,text,mime){
+  try{
+    if(window.claude&&claude.use){const d=await claude.use('downloads');if(d){await d.save({filename:name,data:text});return;}}
+  }catch(e){if(e&&e.code==='declined')return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+$('#btnPrint').onclick=()=>{renderPrint();try{window.print();}catch(e){notify('Printing is blocked here. Use "Download print-ready file".');}};
+$('#btnDl').onclick=()=>{
+  renderPrint();
+  const css=document.querySelector('style').textContent;
+  const html='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Annexures - '+esc(S.setup.trade)+' '+esc(S.setup.batch)+'</title><style>'+css+'body{background:#fff}</style></head><body><main><section class="sec on" id="s-print"><div id="pages">'+$('#pages').innerHTML+'</div></section></main><script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script></body></html>';
+  saveFile('Annexures-'+(S.setup.trade||'batch')+'-'+(S.setup.batch||'')+'.html',html,'text/html');
+};
+
+/* ---------- backup ---------- */
+$('#btnExport').onclick=()=>saveFile('annexure-backup-'+(S.setup.trade||'batch')+'-'+(S.setup.batch||'')+'.json',JSON.stringify(S),'application/json');
+$('#btnImport').onclick=()=>$('#fileImport').click();
+$('#fileImport').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(!j.setup||!j.students)throw 0;S=j;save();init();notify('Backup restored.');}catch(x){notify('That file is not a valid backup.');}};r.readAsText(f);};
+
+function init(){S.rank=Core.RANK.map(r=>r.slice());S.params=JSON.parse(JSON.stringify(Core.PARAMS));renderSetup();renderStudents();$('#mode').value=S.setup.mode;}
+init();
+
+/* ---------- optional Google sign-in + cloud sync (Firebase) ---------- */
+const FB={
+  config:{apiKey:"AIzaSyD5ZJrAEK8WO9fEPhb_Jk8fU9WOQ_8NFl0",authDomain:"iti-staff-attendance.firebaseapp.com",projectId:"iti-staff-attendance",storageBucket:"iti-staff-attendance.firebasestorage.app",messagingSenderId:"753761046439",appId:"1:753761046439:web:017b0caca697ff936b3082"},
+  sdk:"https://www.gstatic.com/firebasejs/10.14.1/"
+};
+(async function cloudInit(){
+  if(!/^https?:$/.test(location.protocol)||!FB.config.apiKey)return;
+  let A,Au,F;
+  try{[A,Au,F]=await Promise.all([import(FB.sdk+'firebase-app.js'),import(FB.sdk+'firebase-auth.js'),import(FB.sdk+'firebase-firestore.js')]);}catch(e){return;}
+  const app=A.initializeApp(FB.config,'annexure'),auth=Au.getAuth(app),db=F.getFirestore(app);
+  const btn=$('#btnGoogle'),tag=$('#cloudTag');
+  btn.hidden=false;
+  let user=null,pushT=null,ready=false;
+  const ref=()=>F.doc(db,'users',user.uid,'annexure','main');
+  const setTag=(t,c)=>{tag.hidden=!t;tag.textContent=t;tag.className='tag '+(c||'');};
+  window.__cloudPush=()=>{
+    if(!user||!ready)return;
+    clearTimeout(pushT);
+    pushT=setTimeout(async()=>{
+      try{await F.setDoc(ref(),{data:JSON.stringify(S),updated:Date.now()});setTag('Synced to '+(user.email||'cloud'),'ok');}
+      catch(e){setTag('Cloud sync failed','warn');}
+    },1500);
+  };
+  const hasWork=()=>S.students.length>0&&Object.keys(S.marks||{}).length>0;
+  async function pull(){
+    ready=false;setTag('Loading cloud data...');
+    try{
+      const snap=await F.getDoc(ref());
+      if(snap.exists()){
+        const cloud=JSON.parse(snap.data().data);
+        if(hasWork()&&JSON.stringify(cloud)!==JSON.stringify(S)){
+          const useCloud=await confirmBox('Your Google account already has saved Annexure data, and this browser has different data.\n\nOK = load the saved cloud data (replaces this browser\'s data).\nCancel = keep this browser\'s data and overwrite the cloud copy.',{title:'Which data do you want?',ok:'Load cloud data'});
+          if(useCloud){S=cloud;localStorage.setItem(KEY,JSON.stringify(S));init();}
+        }else{S=cloud;localStorage.setItem(KEY,JSON.stringify(S));init();}
+      }
+      ready=true;
+      await F.setDoc(ref(),{data:JSON.stringify(S),updated:Date.now()});
+      setTag('Synced to '+(user.email||'cloud'),'ok');
+    }catch(e){
+      ready=false;
+      setTag(e&&e.code==='permission-denied'?'Cloud blocked by rules':'Cloud unavailable','warn');
+    }
+  }
+  Au.onAuthStateChanged(auth,u=>{
+    user=u;
+    if(u){btn.textContent='Sign out';pull();}
+    else{ready=false;btn.textContent='Sign in with Google';setTag('');}
+  });
+  btn.onclick=async()=>{
+    if(user){await Au.signOut(auth);return;}
+    try{const p=new Au.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});await Au.signInWithPopup(auth,p);}
+    catch(e){const c=e&&e.code;if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return;
+      notify(c==='auth/popup-blocked'?'The browser blocked the sign-in popup. Allow popups for this site and try again.':c==='auth/unauthorized-domain'?'This website address is not authorised in Firebase (Authentication > Settings > Authorized domains).':c==='auth/operation-not-allowed'?'Google sign-in is not enabled in Firebase (Authentication > Sign-in method).':'Could not sign in.','Google sign-in');}
+  };
+})();
+</script>
+</body>
+</html>
